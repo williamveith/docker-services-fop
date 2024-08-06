@@ -1,0 +1,9 @@
+services:
+  pdf-generator:
+    build: .
+    image: fop-service
+    ports:
+      - "${HOST_PORT}:50000"
+    environment:
+      - PORT=50000
+    restart: always
