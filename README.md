@@ -4,6 +4,20 @@
 
 The FOP Service is a simple application that generates PDF files from XML data and template files using Apache FOP. This service runs in a Docker container and can be accessed via a REST API endpoint.
 
+## How to Pull the Code from GitHub
+
+To get started with the FOP Service, you can clone the repository from GitHub using the following command:
+
+```sh
+git clone https://github.com/yourusername/docker-services-fop.git
+```
+
+Replace `yourusername` with your GitHub username. After cloning, navigate into the directory:
+
+```sh
+cd docker-services-fop
+```
+
 ## How to Build and Run the App
 
 1. **Build the App**
@@ -91,5 +105,17 @@ This will start the FOP Service, making it accessible at `http://localhost:52000
 - **Dockerfile**: The Dockerfile defines the environment for the FOP Service, including the base image, dependencies, and the command to run the application. It installs Apache FOP and Flask, sets up the working directory, and specifies how to run the Flask application.
 
 - **docker-compose.yml**: The Docker Compose file simplifies the management of multi-container applications. In this case, it defines the PDF generator service, specifies how to build the container, and maps the ports. It also allows for easy configuration of environment variables, such as the port the service will run on.
+
+## Dependencies
+
+To install dependencies for the FOP Service, you can use the provided `requirements.txt` file. This file contains all the necessary Python packages needed for the application. Install the dependencies using the following command:
+
+```sh
+pip install -r requirements.txt
+```
+
+## Git Ignore
+
+The repository includes a `.gitignore` file that ignores the `venv` directory, ensuring that virtual environment files are not tracked in version control.
 
 By using Docker and Docker Compose, you can easily set up, run, and manage the FOP Service in a consistent environment.
