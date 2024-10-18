@@ -3,7 +3,7 @@ services:
     build: .
     image: fop-service
     ports:
-      - "${HOST_PORT}:50000"
+      - "52000:50000"
     environment:
       - PORT=50000
     restart: always

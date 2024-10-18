@@ -2,23 +2,24 @@ from flask import Flask, request, send_file
 import subprocess
 import tempfile
 import os
+from pathlib import Path
 
 app = Flask(__name__)
-
 
 @app.route("/generate-pdf", methods=["POST"])
 def generate_pdf():
     data_xml = request.files["data"]
-    template_xml = request.files["template"]
+    template_filename = request.form.get("template")
 
-    data_xml_path, template_xml_path, output_pdf_path = [
+    template_xml_path = str(Path("/opt/fop/templates") / template_filename)
+    
+    data_xml_path, output_pdf_path = [
         tempfile.NamedTemporaryFile(delete=False, suffix=suffix).name
-        for suffix in [".xml", ".xml", ".pdf"]
+        for suffix in [".xml", ".pdf"]
     ]
 
     data_xml.save(data_xml_path)
-    template_xml.save(template_xml_path)
-
+    
     subprocess.run(
         [
             "/opt/fop/fop/fop",
@@ -36,9 +37,8 @@ def generate_pdf():
         output_pdf_path, download_name="output.pdf", as_attachment=True
     )
 
-    os.unlink(data_xml_path)
-    os.unlink(template_xml_path)
-    os.unlink(output_pdf_path)
+    Path(data_xml_path).unlink()
+    Path(output_pdf_path).unlink()
 
     return response
 

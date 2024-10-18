@@ -38,7 +38,7 @@ cd docker-services-fop
     - **Template**
 
     ```sh
-    curl -X POST -F "data=@[path to data file]" -F "template=@[path to template]" http://localhost:[port defined in env file 52000 is default]/generate-pdf --output [path to output]
+    curl -X POST -F "data=@[path to data file]" -F "template=[template name]" http://localhost:[port defined in env file 52000 is default]/generate-pdf --output [path to output]
     ```
 
     - **Example**
@@ -46,7 +46,7 @@ cd docker-services-fop
     Here’s an example of how to use the service with sample XML files:
 
     ```sh
-    curl -X POST -F "data=@/Users/main/Desktop/data.xml" -F "template=@/Users/main/Desktop/template.xml" http://localhost:52000/generate-pdf --output result.pdf
+    curl -X POST -F "data=@/Users/main/Projects/Docker/fop/test-data/2024070001 - AND (Applied Novel Devices).xml" -F "template=invoice.xml" http://localhost:52000/generate-pdf --output result.pdf
     ```
 
 ## Sample Client Function

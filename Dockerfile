@@ -26,6 +26,7 @@ RUN apt-get update && \
 
 # Copy the Python Flask script directly into the container
 COPY app.py /opt/fop/app.py
+COPY templates /opt/fop/templates
 
 # Command to run the Flask app directly
 CMD ["python3", "/opt/fop/app.py"]

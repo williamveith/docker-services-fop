@@ -1,0 +1,269 @@
+<?xml version="1.0"?>
+<xsl:stylesheet version="1.0"
+	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+	xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:fn="http://www.w3.org/2005/xpath-functions"
+	xmlns:err="http://www.w3.org/2005/xqt-errors"
+	xmlns:fo="http://www.w3.org/1999/XSL/Format"
+	exclude-result-prefixes="xs fn err">
+<!--
+	Copyright 2000-2016 Sedona Visual Controls, Inc.
+	http://www.sedonavc.com/
+-->
+<xsl:output method="xml" encoding="utf-8" omit-xml-declaration="yes" indent="no"/>
+
+<!-- default rule -->
+
+<xsl:template name="default"><xsl:apply-templates/></xsl:template>
+
+<!-- root rule -->
+<xsl:template match="/">
+
+<xsl:variable name="fd_usage" select="number(.//format-data/usage-total)"></xsl:variable>
+<xsl:variable name="fd_costs" select="number(.//format-data/costs-total)"></xsl:variable>
+<xsl:variable name="fd_acosts" select="number(.//format-data/acosts-total)"></xsl:variable>
+<xsl:variable name="fd_surcharge" select="number(.//format-data/surcharge)"></xsl:variable>
+<xsl:variable name="fd_tax" select="number(.//format-data/tax)"></xsl:variable>
+<xsl:variable name="fd_balance" select="number(.//format-data/balance)"></xsl:variable>
+
+<xsl:variable name="create_date" select=".//export-info/date"></xsl:variable>
+
+<xsl:variable name="group" select=".//format-data/group"></xsl:variable>
+<xsl:variable name="date_range" select=".//format-data/date-range"></xsl:variable>
+<xsl:variable name="inv_num" select=".//format-data/invoice-num"></xsl:variable>
+<xsl:variable name="po_ref" select=".//format-data/po-ref"></xsl:variable>
+<xsl:variable name="usage_total" select="format-number($fd_usage,'0.00000')"></xsl:variable>
+<xsl:variable name="costs_total" select="format-number($fd_costs,'###,##0.00')"></xsl:variable>
+<xsl:variable name="acosts_total" select="format-number($fd_acosts,'###,##0.00')"></xsl:variable>
+<xsl:variable name="surcharge_costs" select="format-number($fd_surcharge,'###,##0.00')"></xsl:variable>
+<xsl:variable name="tax" select="format-number($fd_tax,'###,##0.00')"></xsl:variable>
+<xsl:variable name="terms" select=".//format-data/terms"></xsl:variable>
+<xsl:variable name="balance" select="format-number($fd_balance,'###,##0.00')"></xsl:variable>
+
+<xsl:variable name="address" select=".//contact/address"></xsl:variable>
+<xsl:variable name="code" select=".//contact/code"></xsl:variable>
+<xsl:variable name="email" select=".//contact/email[1]"></xsl:variable>
+
+<!-- Build the XML page -->
+<xsl:text disable-output-escaping="yes">&lt;?xml version="1.0" encoding="utf-8"?></xsl:text>
+<fo:root>
+
+<fo:layout-master-set>
+	<fo:simple-page-master master-name="first" page-width="8.50in" page-height="11.00in" margin-left="0.65in" margin-right="0.50in" margin-top="0.50in" margin-bottom="0.50in">
+		<fo:region-body margin-top="0.25in" margin-bottom="0.50in"/>
+		<fo:region-before extent="0.00in"/>
+		<fo:region-after extent="0.25in" margin-bottom="0.00in"/>
+	</fo:simple-page-master>
+</fo:layout-master-set>
+
+<fo:declarations>
+	<x:xmpmeta xmlns:x="adobe:ns:meta/">
+	<rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+		<rdf:Description rdf:about="" xmlns:dc="http://purl.org/dc/elements/1.1/">
+		<!-- Dublin Core properties go here -->
+			<dc:title>Inv <xsl:value-of select="$inv_num"/> - <xsl:value-of select="$group"/></dc:title>
+			<dc:creator></dc:creator>
+			<dc:description></dc:description>
+		</rdf:Description>
+		<rdf:Description rdf:about="" xmlns:xmp="http://ns.adobe.com/xap/1.0/">
+		<!-- XMP properties go here -->
+			<xmp:CreatorTool>Sedona LabSentry</xmp:CreatorTool>
+		</rdf:Description>
+	</rdf:RDF>
+	</x:xmpmeta>
+</fo:declarations>
+
+<fo:page-sequence master-reference="first">
+
+
+<fo:static-content flow-name="xsl-region-after">
+
+<!-- STATIC - FOOTER SECTION  -->
+<fo:table table-layout="fixed" width="100%">
+	<fo:table-column column-width="50%"/>
+	<fo:table-column column-width="50%"/>
+<fo:table-body>
+<fo:table-row line-height="6pt" font-size="6pt">
+	<fo:table-cell><fo:block text-align="start"><xsl:value-of select="$create_date"/></fo:block></fo:table-cell>
+	<fo:table-cell><fo:block text-align="end">Page <fo:page-number/> / <fo:page-number-citation ref-id="final-page"/></fo:block></fo:table-cell>
+</fo:table-row>
+</fo:table-body>
+</fo:table>
+
+</fo:static-content>
+
+
+<fo:flow flow-name="xsl-region-body" id="usage-table">
+
+<!-- BODY - HEADER SECTION  -->
+<fo:table table-layout="fixed" width="100%" border-collapse="separate" padding-bottom="4pt"
+    border-bottom="3pt solid #000000">
+	<fo:table-column column-width="70%"/>
+	<fo:table-column column-width="30%"/>
+<fo:table-body display-align="center">
+<fo:table-row> <!-- &#x00B7; -->
+	<fo:table-cell line-height="8pt" font-size="8pt" text-align="start" font-weight="bold">
+		<fo:block linefeed-treatment="preserve">The University of Texas at Austin - Microelectronics Research Center
+			10100 Burnet Road, Bldg. 160, MER 1.108, R8600, Austin, TX 78758
+			(512) 471-8830 office | (512) 471-9674 fax
+			Email: gerlinde@mer.utexas, williamveith@utexas.edu</fo:block>
+	</fo:table-cell>
+	<fo:table-cell><fo:block line-height="100%" height="100%" font-size="18pt" text-align="end">Invoice</fo:block></fo:table-cell>
+</fo:table-row>
+</fo:table-body>
+</fo:table>
+
+<!-- BODY - BILL TO SECTION  -->
+<fo:table table-layout="fixed" width="100%" border-collapse="separate" font-size="8pt" text-align="left" padding-before="10pt">
+	<fo:table-column column-width="10%"/>
+	<fo:table-column column-width="35%"/>
+	<fo:table-column column-width="30%"/>
+	<fo:table-column column-width="25%"/>
+
+<fo:table-body text-align="left" display-align="before">
+<fo:table-row font-size="8pt">
+	<fo:table-cell number-rows-spanned="7" padding-start="5pt"><fo:block text-align="right" font-weight="bold">To:</fo:block></fo:table-cell>
+	<fo:table-cell number-rows-spanned="7" line-height="10pt" padding-start="5pt"><fo:block linefeed-treatment="preserve"><xsl:value-of select="$address"/></fo:block>
+			<fo:block><xsl:value-of select="$email"/></fo:block>
+	</fo:table-cell>
+	<fo:table-cell line-height="12pt" padding-start="5pt"><fo:block text-align="right" font-weight="bold" wrap-option="no-wrap">Invoice #:</fo:block></fo:table-cell>
+	<fo:table-cell line-height="12pt" padding-start="5pt"><fo:block text-align="left" font-weight="bold" text-decoration="underline"><xsl:value-of select="$inv_num"/></fo:block></fo:table-cell>
+</fo:table-row>
+<fo:table-row font-size="8pt">
+	<fo:table-cell line-height="12pt" padding-start="5pt"><fo:block text-align="right" font-weight="bold" wrap-option="no-wrap">Date of Service:</fo:block></fo:table-cell>
+	<fo:table-cell line-height="12pt" padding-start="5pt"><fo:block text-align="left"><xsl:value-of select="$date_range"/></fo:block></fo:table-cell>
+</fo:table-row>
+<fo:table-row font-size="8pt">
+	<fo:table-cell line-height="12pt" padding-start="5pt"><fo:block text-align="right" font-weight="bold" wrap-option="no-wrap">Purchase Order Reference:</fo:block></fo:table-cell>
+	<fo:table-cell line-height="12pt" padding-start="5pt"><fo:block text-align="left"><xsl:value-of select="$po_ref"/></fo:block></fo:table-cell>
+</fo:table-row>
+<fo:table-row font-size="8pt">
+	<fo:table-cell line-height="12pt" padding-start="5pt"><fo:block text-align="right" font-weight="bold" wrap-option="no-wrap">Total Applied Cost:</fo:block></fo:table-cell>
+	<fo:table-cell line-height="12pt" padding-start="5pt"><fo:block text-align="left">$ <xsl:value-of select="$acosts_total"/></fo:block></fo:table-cell>
+</fo:table-row>
+<fo:table-row font-size="8pt">
+	<fo:table-cell line-height="12pt" padding-start="5pt"><fo:block text-align="right" font-weight="bold" wrap-option="no-wrap">Surcharge:</fo:block></fo:table-cell>
+	<fo:table-cell line-height="12pt" padding-start="5pt"><fo:block text-align="left">$ <xsl:value-of select="$surcharge_costs"/></fo:block></fo:table-cell>
+</fo:table-row>
+<fo:table-row font-size="8pt">
+	<fo:table-cell line-height="12pt" padding-start="5pt"><fo:block text-align="right" font-weight="bold" wrap-option="no-wrap">Sales Tax:</fo:block></fo:table-cell>
+	<fo:table-cell line-height="12pt" padding-start="5pt"><fo:block text-align="left">$ <xsl:value-of select="$tax"/></fo:block></fo:table-cell>
+</fo:table-row>
+<fo:table-row font-size="8pt">
+	<fo:table-cell line-height="12pt" padding-start="5pt"><fo:block text-align="right" font-weight="bold" wrap-option="no-wrap">Terms:</fo:block></fo:table-cell>
+	<fo:table-cell line-height="12pt" padding-start="5pt"><fo:block text-align="left"><xsl:value-of select="$terms"/></fo:block></fo:table-cell>
+</fo:table-row>
+</fo:table-body>
+</fo:table>
+
+<!-- BODY - REMIT PAYMENT SECTION -->
+<fo:table table-layout="fixed" width="100%" border-collapse="separate" font-size="8pt" text-align="left" padding-before="0.20in">
+	<fo:table-column column-width="10%"/>
+	<fo:table-column column-width="35%"/>
+	<fo:table-column column-width="30%"/>
+	<fo:table-column column-width="25%"/>
+
+<fo:table-body text-align="left" display-align="before">
+<fo:table-row>
+	<fo:table-cell number-columns-spanned="2" line-height="12pt" padding-start="5pt"><fo:block font-weight="bold" text-decoration="underline">Please Remit Payment To:</fo:block></fo:table-cell>
+	<fo:table-cell number-rows-spanned="1" padding-start="5pt"><fo:block font-size="14pt" text-align="right" font-weight="bold" wrap-option="no-wrap">Balance Due:</fo:block></fo:table-cell>
+	<fo:table-cell number-rows-spanned="1" padding-start="5pt"><fo:block font-size="14pt" text-align="left" font-weight="bold">$ <xsl:value-of select="$balance"/></fo:block></fo:table-cell>
+</fo:table-row>
+<fo:table-row>
+	<fo:table-cell><fo:block></fo:block></fo:table-cell>
+	<fo:table-cell line-height="10pt" padding-start="5pt"><fo:block linefeed-treatment="preserve"><fo:inline font-weight="bold">The University of Texas at Austin
+			Microelectronics Research Center</fo:inline>
+			10100 Burnet Road, Bldg. 160
+			MER 1.108 / R8600
+			Austin, TX 78758
+			(512) 471-8830 office | (512) 471-9674 fax</fo:block>
+	</fo:table-cell>
+	<fo:table-cell number-columns-spanned="2"><fo:block font-size="10pt" color="#000088" text-align="left" linefeed-treatment="preserve"><fo:inline font-weight="bold">
+			NOTE:</fo:inline> Please acknowledge NSF support of the cleanroom in
+			your publications, using the following Award number:
+			The work was partly done at the Texas Nanofabrication Facility
+			supported by NSF grant NNCI-2025227.</fo:block>
+	</fo:table-cell>
+</fo:table-row>
+</fo:table-body>
+</fo:table>
+
+<!-- BODY - USAGE TABLE DATA  -->
+<fo:table space-before.optimum="0.25in" table-layout="fixed" width="100%" border-collapse="collapse" font-size="7pt" text-align="left">
+	<fo:table-column column-width="8%"/>
+	<fo:table-column column-width="8%"/>
+	<fo:table-column column-width="22%"/>
+	<fo:table-column column-width="22%"/>
+	<fo:table-column column-width="8%"/>
+	<fo:table-column column-width="8%"/>
+	<fo:table-column column-width="12%"/>
+	<fo:table-column column-width="12%"/>
+
+<fo:table-header line-height="12pt" font-weight="bold" background-color="#BBCCEE">
+<fo:table-row border-bottom="1pt solid #000000" border-top="3pt solid #000000">
+	<fo:table-cell text-align="center"><fo:block>Date</fo:block></fo:table-cell>
+	<fo:table-cell text-align="center"><fo:block>Time</fo:block></fo:table-cell>
+	<fo:table-cell text-align="left"><fo:block>User</fo:block></fo:table-cell>
+	<fo:table-cell text-align="left"><fo:block>Tool</fo:block></fo:table-cell>
+	<fo:table-cell text-align="center"><fo:block>Usage</fo:block></fo:table-cell>
+	<fo:table-cell text-align="center"><fo:block>Rate</fo:block></fo:table-cell>
+	<fo:table-cell text-align="center"><fo:block>Cost</fo:block></fo:table-cell>
+	<fo:table-cell text-align="center"><fo:block>Applied Cost</fo:block></fo:table-cell>
+</fo:table-row>
+</fo:table-header>
+
+<fo:table-body text-align="center" line-height="10pt" wrap-option="no-wrap">
+
+		<xsl:for-each select="//tr">
+			<xsl:variable name="date" select="td[1]"></xsl:variable>
+			<xsl:variable name="time" select="td[2]"></xsl:variable>
+			<xsl:variable name="user" select="td[3]"></xsl:variable>
+			<xsl:variable name="tool" select="td[4]"></xsl:variable>
+			<xsl:variable name="usage" select="td[5]"></xsl:variable>
+			<xsl:variable name="rate" select="td[6]"></xsl:variable>
+			<xsl:variable name="cost" select="td[7]"></xsl:variable>
+			<xsl:variable name="acost" select="td[8]"></xsl:variable>
+<!--					<xsl:apply-templates select="current()"/> -->
+<fo:table-row border-bottom="1pt solid #000000">
+	<fo:table-cell text-align="left"><fo:block><xsl:value-of select="$date"/></fo:block></fo:table-cell>
+	<fo:table-cell text-align="center"><fo:block><xsl:value-of select="$time"/></fo:block></fo:table-cell>
+	<fo:table-cell text-align="left" padding-right="5pt"><fo:block-container overflow="hidden"><fo:block><xsl:value-of select="$user"/></fo:block></fo:block-container></fo:table-cell>
+	<fo:table-cell text-align="left" padding-right="5pt"><fo:block-container overflow="hidden"><fo:block><xsl:value-of select="$tool"/></fo:block></fo:block-container></fo:table-cell>
+	<fo:table-cell text-align="right" padding-right="1%"><fo:block><xsl:value-of select="$usage"/></fo:block></fo:table-cell>
+	<fo:table-cell text-align="center"><fo:block>$<xsl:value-of select="$rate"/></fo:block></fo:table-cell>
+	<fo:table-cell text-align="right" padding-right="1%"><fo:block>$<xsl:value-of select="$cost"/></fo:block></fo:table-cell>
+	<fo:table-cell text-align="right"><fo:block>$<xsl:value-of select="$acost"/></fo:block></fo:table-cell>
+</fo:table-row>
+		</xsl:for-each>
+
+</fo:table-body>
+</fo:table>
+
+<!-- BODY - USAGE TOTALS -->
+<fo:table space-before.optimum="3pt" table-layout="fixed" width="100%" text-align="left">
+	<fo:table-column column-width="68%"/>
+	<fo:table-column column-width="16%"/>
+	<fo:table-column column-width="16%"/>
+<fo:table-body text-align="right" wrap-option="no-wrap">
+	<fo:table-row line-height="12pt" font-size="10pt" font-weight="bold">
+		<fo:table-cell padding-right="1%"><fo:block><xsl:value-of select="$usage_total"/></fo:block></fo:table-cell>
+		<fo:table-cell><fo:block>$<xsl:value-of select="$costs_total"/></fo:block></fo:table-cell>
+		<fo:table-cell padding-right="1%"><fo:block>$<xsl:value-of select="$acosts_total"/></fo:block></fo:table-cell>
+	</fo:table-row>
+	<fo:table-row line-height="12pt" font-size="8pt">
+		<fo:table-cell padding-right="1%"><fo:block>(Tot. Time)</fo:block></fo:table-cell>
+		<fo:table-cell><fo:block>(Tot. Cost)</fo:block></fo:table-cell>
+		<fo:table-cell padding-right="1%"><fo:block>(Tot. App. Cost)</fo:block></fo:table-cell>
+	</fo:table-row>
+</fo:table-body>
+</fo:table>
+
+<fo:block id="final-page"/>
+
+</fo:flow>
+</fo:page-sequence>
+
+</fo:root>
+</xsl:template>
+
+</xsl:stylesheet>
